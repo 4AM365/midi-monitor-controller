@@ -1,3 +1,0 @@
-mido
-python-rtmidi
-monitorcontrol

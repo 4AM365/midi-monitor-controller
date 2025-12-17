@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: midi-monitor-controller
-Version: 0.1.0
-Requires-Dist: mido
-Requires-Dist: python-rtmidi
-Requires-Dist: monitorcontrol
-Dynamic: requires-dist
