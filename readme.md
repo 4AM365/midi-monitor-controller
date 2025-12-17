@@ -1,30 +1,47 @@
-This repo is used to figure out my monitor settings on a BenQ Mobiuz EX321UX.
+# Monitor Controller for BenQ MOBIUZ EX321UX
+Hardware DDC/CI control for BenQ monitors using Behringer X-Touch Mini.
 
-These are the options:
-- Local dimming
-- Crosshair
-- Automatic brightness
-- Manual brightness setting
+## Features
+- Brightness control (knob 1)
+- Night mode with warm color shift (knob 2)
+- Local dimming toggle (button 8)
+- HDR toggle (button 9)
 
-Communication from computer to monitor is done with the usb-b upstream port using the DDC/CI protocol. I'll use a program like ControlMyMonitor to run it.
+## Hardware Requirements
+- BenQ MOBIUZ EX321UX monitor (or similar with DDC/CI)
+- Behringer X-Touch Mini MIDI controller
 
-BenQ has custom functions beyond the usual DDC/CI stuff. These are called VCPs. Let's find them out with this command:
+## Limitations
 
-''' ControlMyMonitor.exe /smonitor "BenQ EX321UX" /SaveReport "report.txt"
+### Undocumented VCP Codes
+The BenQ MOBIUZ EX321UX uses manufacturer-specific VCP codes for some features. We've discovered:
 
-For CAD and work (photo review), we want true to life settings. Some people say local dimming is distracting here.
+- **0xEA**: Local Dimming (0=Off, 1=On) ✓ Confirmed
+- **0x10**: Brightness ✓ Standard
+- **0x1A, 0x16, 0x18**: RGB Gains (for night mode) ✓ Standard
+- **0x87**: Sharpness ✓ Standard
 
-For entertainment, we definitely want local dimming.
+**Unknown/Untested:**
+- Black eQualizer
+- Response Time / Overdrive
+- Picture Mode switching
+- HDR toggle via DDC
 
-BI+ is fine, but locks some things out. It can also compete with other algos and disable certain settings.
+If you discover additional VCP codes for this monitor, please let me know!
 
-We can either have different profiles, or break the controls out.
+### Monitor Compatibility
+This software is designed for the **BenQ MOBIUZ EX321UX** but may work with other BenQ monitors that support DDC/CI. Features like Local Dimming may not work on monitors without that specific VCP code.
 
-If we use a Behringer X-Touch Mini, we can use a knob for brightness, a knob for night mode (reduce blue channel), a button for local dimming, and a button for crosshair. That would be cool!
+## Installation
+1. Download `MonitorController.exe` from [Releases](link)
+2. Run the exe
+3. Add to Windows startup (optional)
 
-HDR is a cool feature too. Most content is mastered for standard dynamic range, and for work I definitely want standard. I want to see what's really going on. We might want to apply HDR on top of a game or video. Let's make that a button.
+## Building from Source
+[Instructions here]
 
+## License
+MIT
 
- It sounds like my best approach will be this: I'll discover the VPC codes and then have a python layer between the computer and a DDC program. The python layer will assign a button on the x-touch mini to HDR, local dimming, and crosshair. A knob will go to brightness and a knob will go to 'night mode' e.g. cut the blue tones out.
-
- https://www.nirsoft.net/utils/control_my_monitor.html
+## Credits
+Built by William Craig - Forensic engineer who got tired of OSD menus

@@ -2,6 +2,7 @@
 """Main entry point for Monitor Controller"""
 
 import sys
+import os
 from midi_handler import MIDIHandler
 from monitor_controller import MonitorController
 from control_mapper import ControlMapper
@@ -75,3 +76,13 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
+# Fix working directory for PyInstaller
+if getattr(sys, 'frozen', False):
+    # Running as compiled exe
+    application_path = os.path.dirname(sys.executable)
+else:
+    # Running as script
+    application_path = os.path.dirname(__file__)
+
+os.chdir(application_path)

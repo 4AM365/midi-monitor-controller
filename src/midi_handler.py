@@ -154,29 +154,6 @@ class MIDIHandler:
         else:
             # Ignore other message types (pitchwheel, etc.)
             return None
-        
-#old led ring method    
-    # def set_led_ring(self, knob_id: int, position: int):
-    #     """
-    #     Set LED ring position around a knob.
-        
-    #     Args:
-    #         knob_id: Knob CC number (e.g., 1 for your knob 1)
-    #         position: LED position (0-11, where 11 is full ring)
-    #     """
-    #     if not self.outport:
-    #         return  # No output port available
-        
-    #     # X-Touch LED ring responds to CC messages
-    #     position = max(0, min(11, position))  # Clamp 0-11
-        
-    #     msg = mido.Message('control_change', 
-    #                       control=knob_id, 
-    #                       value=position,
-    #                       channel=0)
-    #     self.outport.send(msg)
-
-    # src/midi_handler.py - update for Pan mode
 
     def set_led_ring(self, knob_id: int, position: int):
         """

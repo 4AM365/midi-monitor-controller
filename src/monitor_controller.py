@@ -1,15 +1,28 @@
 # src/monitor_controller.py
-"""Monitor control via DDC/CI"""
 
 from monitorcontrol import get_monitors
 from typing import Optional
 
 class MonitorController:
-    """
-    Controls monitor settings via DDC/CI.
-    
-    Uses the monitorcontrol library to communicate with the monitor.
-    """
+
+
+    def get_local_dimming(self) -> Optional[bool]:
+        """
+        Get current local dimming state.
+        
+        Returns:
+            True if on, False if off, None if failed
+        """
+        if not self.monitor:
+            raise RuntimeError("Not connected. Call connect() first.")
+        
+        try:
+            with self.monitor:
+                current, _ = self.monitor.vcp.get_vcp_feature(self._vcp_codes['local_dimming'])
+            return bool(current)  # 1 = True (on), 0 = False (off)
+        except Exception as e:
+            print(f"✗ Failed to get local dimming: {e}")
+            return None
     
     def __init__(self, monitor_index: int = 0):
         """

@@ -38,7 +38,7 @@ class ControlMapper:
             self.brightness.set(current_brightness)
             print(f"  Brightness: {current_brightness}")
         
-        # Always reset to calibrated on startup
+        # Reset night mode
         if self.config.always_start_calibrated:
             self.night_mode.set(100)
             self.monitor.set_night_mode(100)
@@ -50,6 +50,17 @@ class ControlMapper:
                 self.night_mode.set(current_blue)
                 self.current_night_mode_step = self._get_night_mode_step(current_blue)
                 print(f"  Night mode: {current_blue}")
+        
+        # Read local dimming state (NEW)
+        current_dimming = self.monitor.get_local_dimming()
+        if current_dimming is not None:
+            self.local_dimming_enabled = current_dimming
+            print(f"  Local dimming: {'ON' if current_dimming else 'OFF'}")
+        else:
+            # Couldn't read - default to ON and set it
+            self.local_dimming_enabled = True
+            self.monitor.set_local_dimming(True)
+            print(f"  Local dimming: ON (default)")
         
         # Update LED feedback
         self._update_leds()
@@ -104,12 +115,13 @@ class ControlMapper:
         if hit_limit and new_val == 100:
             print("🔵 CALIBRATED - Hard stop reached")
     
+
     def handle_local_dimming_button(self):
-        """Toggle local dimming"""
+        
         self.local_dimming_enabled = not self.local_dimming_enabled
         
-        # Send to monitor
-        self.monitor.set_local_dimming(self.local_dimming_enabled)
+        
+        result = self.monitor.set_local_dimming(self.local_dimming_enabled)
         
         # Update button LED
         self.midi.set_button_led(self.config.button_local_dimming, self.local_dimming_enabled)
@@ -119,7 +131,7 @@ class ControlMapper:
     
     def handle_hdr_button(self):
         """Toggle HDR (placeholder)"""
-        self.hdr_enabled = not self.hdr_enabled
+        self.hdr_enabled = False
         
         # Update button LED
         self.midi.set_button_led(self.config.button_hdr, self.hdr_enabled)
