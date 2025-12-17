@@ -58,26 +58,33 @@ class MonitorController:
         self.monitor = None
     
     def set_brightness(self, value: int) -> bool:
-        """
-        Set monitor brightness.
-        
-        Args:
-            value: Brightness level (0-100)
-        
-        Returns:
-            True if successful
-        """
+        """Set monitor brightness with auto-reconnect on failure."""
         if not self.monitor:
             raise RuntimeError("Not connected. Call connect() first.")
         
         try:
-            value = max(0, min(100, value))  # Clamp
+            value = max(0, min(100, value))
             with self.monitor:
                 self.monitor.vcp.set_vcp_feature(self._vcp_codes['brightness'], value)
             return True
         except Exception as e:
-            print(f"✗ Failed to set brightness: {e}")
-            return False
+            # DDC failed - try reconnecting
+            print(f"⚠️  DDC error, attempting reconnect: {e}")
+            try:
+                self.reconnect()
+                # Retry the command
+                with self.monitor:
+                    self.monitor.vcp.set_vcp_feature(self._vcp_codes['brightness'], value)
+                print("✓ Reconnected successfully")
+                return True
+            except Exception as e2:
+                print(f"✗ Reconnect failed: {e2}")
+                return False
+
+    def reconnect(self):
+        """Reconnect to monitor (after sleep/wake)"""
+        self.disconnect()
+        self.connect()
     
     def get_brightness(self) -> Optional[int]:
         """
