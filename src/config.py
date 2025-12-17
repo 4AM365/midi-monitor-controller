@@ -1,4 +1,5 @@
-"""User configuration"""
+# src/config.py
+"""Configuration for monitor controller"""
 
 from dataclasses import dataclass
 
@@ -8,22 +9,26 @@ class Config:
     
     # Monitor settings
     monitor_name: str = "BenQ EX321UX"
+    monitor_index: int = 0
     
     # MIDI device
     midi_device: str = "X-TOUCH MINI"
+    knob_sensitivity: float = 1.0  # For absolute encoders
     
-    # Control mappings (CC numbers from X-Touch Editor)
-    brightness_knob_cc: int = 1
-    night_mode_knob_cc: int = 2
-    hdr_button_note: int = 0
-    local_dimming_button_note: int = 1
-    crosshair_button_note: int = 2
+    # X-Touch control mappings
+    # KNOBS (CC numbers)
+    knob_brightness: int = 1
+    knob_night_mode: int = 2
+    
+    # BUTTONS (Note numbers)
+    button_local_dimming: int = 8
+    button_hdr: int = 9
+    button_crosshair: int = 10  # For future use
     
     # Behavior
-    always_start_calibrated: bool = True  # Night mode knob resets to 100 on startup
-    notify_on_limit: bool = True
+    always_start_calibrated: bool = True
     
     @classmethod
-    def load(cls, path: str = "config.json"):
-        """Load from JSON"""
-        pass
+    def load(cls):
+        """Load configuration (for now just return defaults)"""
+        return cls()

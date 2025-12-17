@@ -1,66 +1,77 @@
-"""Application entry point"""
+# src/main.py
+"""Main entry point for Monitor Controller"""
 
-import json
 import sys
-from midi_handler import MIDIHandler, ControlType
+from midi_handler import MIDIHandler
 from monitor_controller import MonitorController
-from control_mappings import ControlMapper
+from control_mapper import ControlMapper
 from config import Config
 
 def main():
-    # Load configuration
-    config = Config.load()
-    
-    # Load discovered VCP codes
-    with open('data/vcp_codes.json') as f:
-        vcp_codes = json.load(f)
-    
-    # Initialize components
-    monitor = MonitorController(config.monitor_name, vcp_codes)
-    midi = MIDIHandler(config.midi_device)
-    mapper = ControlMapper(monitor, midi)
-    
-    # Restore or initialize state
-    if config.always_start_calibrated:
-        mapper.night_mode.position = 100
-        mapper.monitor.set_blue_gain(100)
-    else:
-        mapper.load_state()
-    
-    # Initialize LEDs to match state
-    mapper.sync_leds()
-    
-    print("Monitor Controller running. Press Ctrl+C to exit.")
+    """Run the monitor controller application"""
+    print("=" * 50)
+    print("Monitor Controller v0.1.0")
+    print("=" * 50)
+    print()
     
     try:
+        # Load configuration
+        config = Config.load()
+        
+        # Initialize components
+        print("Connecting to devices...")
+        midi = MIDIHandler(
+            device_name=config.midi_device,
+            knob_sensitivity=config.knob_sensitivity
+        )
+        monitor = MonitorController(monitor_index=config.monitor_index)
+        
+        midi.connect()
+        monitor.connect()
+        
+        # Create control mapper
+        mapper = ControlMapper(midi, monitor, config)
+        mapper.initialize()
+        
+        print()
+        print("=" * 50)
+        print("System Ready!")
+        print("=" * 50)
+        print(f"Knob {config.knob_brightness} = Brightness")
+        print(f"Knob {config.knob_night_mode} = Night Mode")
+        print(f"Button {config.button_local_dimming} = Local Dimming")
+        print(f"Button {config.button_hdr} = HDR Toggle")
+        print()
+        print("Press Ctrl+C to exit")
+        print("=" * 50)
+        print()
+        
         # Main event loop
         while True:
             event = midi.read_event()
-            
-            # Route to appropriate handler
-            if event.control_id == config.brightness_knob_cc:
-                delta = _parse_relative_cc(event.value)
-                mapper.handle_brightness_knob(delta)
-            
-            elif event.control_id == config.night_mode_knob_cc:
-                delta = _parse_relative_cc(event.value)
-                mapper.handle_night_mode_knob(delta)
-            
-            elif event.control_id == config.hdr_button_note:
-                mapper.handle_hdr_button()
-            
-            # ... etc for other controls
-    
+            if event:
+                mapper.handle_event(event)
+                
     except KeyboardInterrupt:
-        print("\nSaving state and exiting...")
-        mapper.save_state()
-        sys.exit(0)
+        print("\n\nShutting down gracefully...")
+        
+    except Exception as e:
+        print(f"\n✗ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+        
+    finally:
+        # Cleanup
+        try:
+            midi.disconnect()
+            monitor.disconnect()
+        except:
+            pass
+        
+        print("✓ Goodbye!")
+    
+    return 0
 
-def _parse_relative_cc(value: int) -> int:
-    """Convert relative CC value to signed delta"""
-    return value - 64 if value > 64 else -(64 - value)
-
-
-#this block is a guard that keeps us from using modules in other plaes without realizing that there are dependencies referred to in other contexts.
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

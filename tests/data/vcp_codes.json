@@ -1,0 +1,207 @@
+{
+  "monitor": "BenQ EX321UX",
+  "standard_codes": {
+    "brightness": {
+      "code": 16,
+      "current": 80,
+      "max": 100
+    },
+    "contrast": {
+      "code": 18,
+      "current": 50,
+      "max": 100
+    },
+    "color_preset": {
+      "code": 20,
+      "current": 11,
+      "max": 11
+    },
+    "red_gain": {
+      "code": 22,
+      "current": 100,
+      "max": 100
+    },
+    "green_gain": {
+      "code": 24,
+      "current": 100,
+      "max": 100
+    },
+    "blue_gain": {
+      "code": 26,
+      "current": 100,
+      "max": 100
+    },
+    "input_source": {
+      "code": 96,
+      "current": 19,
+      "max": 3
+    },
+    "sharpness": {
+      "code": 135,
+      "current": 6,
+      "max": 10
+    },
+    "color_temp_increment": {
+      "code": 138,
+      "current": 10,
+      "max": 20
+    },
+    "power_mode": {
+      "code": 214,
+      "current": 1,
+      "max": 5
+    },
+    "display_application": {
+      "code": 220,
+      "current": 24,
+      "max": 38
+    }
+  },
+  "manufacturer_codes": {
+    "0xE0": {
+      "code": 224,
+      "current": 0,
+      "max": 0
+    },
+    "0xE1": {
+      "code": 225,
+      "current": 0,
+      "max": 0
+    },
+    "0xE2": {
+      "code": 226,
+      "current": 0,
+      "max": 0
+    },
+    "0xE4": {
+      "code": 228,
+      "current": 0,
+      "max": 0
+    },
+    "0xE6": {
+      "code": 230,
+      "current": 1,
+      "max": 0
+    },
+    "0xE8": {
+      "code": 232,
+      "current": 512,
+      "max": 65535
+    },
+    "0xEA": {
+      "code": 234,
+      "current": 0,
+      "max": 1
+    },
+    "0xED": {
+      "code": 237,
+      "current": 0,
+      "max": 6
+    },
+    "0xEE": {
+      "code": 238,
+      "current": 2,
+      "max": 2
+    },
+    "0xEF": {
+      "code": 239,
+      "current": 1,
+      "max": 1
+    },
+    "0xF0": {
+      "code": 240,
+      "current": 1,
+      "max": 3
+    },
+    "0xF3": {
+      "code": 243,
+      "current": 14,
+      "max": 16
+    },
+    "0xF5": {
+      "code": 245,
+      "current": 1,
+      "max": 1
+    },
+    "0xF6": {
+      "code": 246,
+      "current": 0,
+      "max": 1
+    },
+    "0xF8": {
+      "code": 248,
+      "current": 0,
+      "max": 30
+    },
+    "0xF9": {
+      "code": 249,
+      "current": 0,
+      "max": 30
+    },
+    "0xFB": {
+      "code": 251,
+      "current": 0,
+      "max": 30
+    },
+    "0xFD": {
+      "code": 253,
+      "current": 1,
+      "max": 2
+    },
+    "0xFE": {
+      "code": 254,
+      "current": 0,
+      "max": 20
+    },
+    "0xFF": {
+      "code": 255,
+      "current": 0,
+      "max": 20
+    },
+    "0x70": {
+      "code": 112,
+      "current": 50,
+      "max": 100
+    },
+    "0x72": {
+      "code": 114,
+      "current": 140,
+      "max": 160
+    },
+    "0x7A": {
+      "code": 122,
+      "current": 0,
+      "max": 10
+    },
+    "0x7B": {
+      "code": 123,
+      "current": 6,
+      "max": 20
+    },
+    "0xA0": {
+      "code": 160,
+      "current": 45,
+      "max": 100
+    },
+    "0xAC": {
+      "code": 172,
+      "current": 64056,
+      "max": 4
+    },
+    "0xAE": {
+      "code": 174,
+      "current": 14450,
+      "max": 65535
+    },
+    "0xB2": {
+      "code": 178,
+      "current": 1,
+      "max": 1
+    },
+    "0xB6": {
+      "code": 182,
+      "current": 3,
+      "max": 5
+    }
+  }
+}
