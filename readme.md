@@ -33,7 +33,7 @@ If you discover additional VCP codes for this monitor, please let me know!
 This software is designed for the **BenQ MOBIUZ EX321UX** but may work with other BenQ monitors that support DDC/CI. Features like Local Dimming may not work on monitors without that specific VCP code.
 
 ## Installation
-1. Download `MonitorController.exe` from [Releases](link)
+1. Download `MonitorController.exe` from [dist](https://github.com/4AM365/midi-monitor-controller/tree/master/dist)
 2. Run the exe
 3. Add to Windows startup (optional)
 
