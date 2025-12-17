@@ -1,16 +1,10 @@
-# src/control_mapper.py
-"""Maps MIDI controls to monitor actions"""
-
 from virtual_knob import VirtualKnob
 from midi_handler import MIDIHandler
 from monitor_controller import MonitorController
 from config import Config
 
 class ControlMapper:
-    """
-    Maps X-Touch controls to monitor functions.
-    """
-    
+    """Maps MIDI controls to monitor actions"""    
     def __init__(self, midi: MIDIHandler, monitor: MonitorController, config: Config):
         self.midi = midi
         self.monitor = monitor
@@ -43,13 +37,13 @@ class ControlMapper:
             self.night_mode.set(100)
             self.monitor.set_night_mode(100)
             self.current_night_mode_step = 100
-            print(f"  Night mode: 100 (reset to calibrated)")
+            print(f"Night mode: 100 (reset to calibrated)")
         else:
             current_blue = self.monitor.get_blue_gain()
             if current_blue is not None:
                 self.night_mode.set(current_blue)
                 self.current_night_mode_step = self._get_night_mode_step(current_blue)
-                print(f"  Night mode: {current_blue}")
+                print(f"Night mode: {current_blue}")
         
         # Read local dimming state (NEW)
         current_dimming = self.monitor.get_local_dimming()
@@ -60,12 +54,12 @@ class ControlMapper:
             # Couldn't read - default to ON and set it
             self.local_dimming_enabled = True
             self.monitor.set_local_dimming(True)
-            print(f"  Local dimming: ON (default)")
+            print(f"Local dimming: ON (default)")
         
         # Update LED feedback
         self._update_leds()
         
-        print("✓ Initialized")
+        print("Initialized")
     
     def _get_night_mode_step(self, value: int) -> int:
         """Map continuous value (0-100) to nearest discrete step"""
@@ -99,11 +93,11 @@ class ControlMapper:
             
             # Print step change
             step_names = {
-                100: "🔵 Calibrated (6500K)",
-                75: "🟦 Slightly Warm (5500K)",
-                50: "🟧 Warm (4500K)",
-                25: "🟠 Very Warm (3500K)",
-                0: "🟤 Candlelight (2700K)"
+                100: "Calibrated (6500K)",
+                75: "Slightly Warm (5500K)",
+                50: "Warm (4500K)",
+                25: "Very Warm (3500K)",
+                0: "Candlelight (2700K)"
             }
             print(f"Night Mode: {step_names.get(new_step, new_step)}")
         

@@ -1,5 +1,3 @@
-# src/monitor_controller.py
-
 from monitorcontrol import get_monitors
 from typing import Optional
 
