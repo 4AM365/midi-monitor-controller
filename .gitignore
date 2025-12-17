@@ -1,7 +1,6 @@
 # Build artifacts
 dist/
 build/
-*.spec
 
 # Python
 __pycache__/
