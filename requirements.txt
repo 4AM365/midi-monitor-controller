@@ -2,3 +2,5 @@ mido==1.3.2
 python-rtmidi==1.5.8
 monitorcontrol==4.1.0
 pyinstaller==6.3.0
+pystray==0.19.5
+pillow==11.1.0

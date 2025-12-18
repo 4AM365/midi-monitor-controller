@@ -7,6 +7,17 @@ from midi_handler import MIDIHandler
 from monitor_controller import MonitorController
 from control_mapper import ControlMapper
 from config import Config
+from tray_icon import TrayIcon
+
+# Fix working directory for PyInstaller
+if getattr(sys, 'frozen', False):
+    # Running as compiled exe
+    application_path = os.path.dirname(sys.executable)
+else:
+    # Running as script
+    application_path = os.path.dirname(__file__)
+
+os.chdir(application_path)
 
 def main():
     """Run the monitor controller application"""
@@ -14,6 +25,26 @@ def main():
     print("Monitor Controller v0.1.0")
     print("=" * 50)
     print()
+    
+    # Global reference for cleanup
+    midi = None
+    monitor = None
+    tray = None
+    
+    def cleanup_and_exit():
+        """Clean up resources and exit"""
+        print("\nShutting down gracefully...")
+        try:
+            if midi:
+                midi.disconnect()
+            if monitor:
+                monitor.disconnect()
+            if tray:
+                tray.stop()
+        except:
+            pass
+        print("✓ Goodbye!")
+        sys.exit(0)
     
     try:
         # Load configuration
@@ -43,46 +74,31 @@ def main():
         print(f"Button {config.button_local_dimming} = Local Dimming")
         print(f"Button {config.button_hdr} = HDR Toggle")
         print()
-        print("Press Ctrl+C to exit")
+        print("Check system tray for icon")
+        print("Right-click tray icon to exit")
         print("=" * 50)
         print()
         
+        # Start system tray icon
+        tray = TrayIcon(on_exit_callback=cleanup_and_exit)
+        tray.start()
+        
         # Main event loop
-        while True:
+        while tray.running:
             event = midi.read_event()
             if event:
                 mapper.handle_event(event)
                 
     except KeyboardInterrupt:
-        print("\n\nShutting down gracefully...")
+        cleanup_and_exit()
         
     except Exception as e:
         print(f"\n✗ Error: {e}")
         import traceback
         traceback.print_exc()
         return 1
-        
-    finally:
-        # Cleanup
-        try:
-            midi.disconnect()
-            monitor.disconnect()
-        except:
-            pass
-        
-        print("✓ Goodbye!")
     
     return 0
 
 if __name__ == '__main__':
     sys.exit(main())
-
-# Fix working directory for PyInstaller
-if getattr(sys, 'frozen', False):
-    # Running as compiled exe
-    application_path = os.path.dirname(sys.executable)
-else:
-    # Running as script
-    application_path = os.path.dirname(__file__)
-
-os.chdir(application_path)
