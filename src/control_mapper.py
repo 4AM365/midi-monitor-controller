@@ -13,6 +13,7 @@ class ControlMapper:
         # Virtual knobs
         self.brightness = VirtualKnob("Brightness", 75, 0, 100)
         self.night_mode = VirtualKnob("Night Mode", 100, 0, 100)
+        self.mappings = config.controls
         
         # Button states
         self.local_dimming_enabled = True
@@ -21,6 +22,12 @@ class ControlMapper:
         # Night mode discrete steps (5 levels)
         self.night_mode_steps = [0, 25, 50, 75, 100]
         self.current_night_mode_step = 100  # Start at calibrated
+
+    def handle_event(self, event):
+        # Dynamic routing based on config
+        for function, mapping in self.mappings.items():
+            if event.control_id == mapping['control_id']:
+                self._handle_function(function, event)
     
     def initialize(self):
         """Sync virtual knobs with actual monitor state"""

@@ -8,14 +8,14 @@ import threading
 class TrayIcon:
     """System tray icon with menu"""
     
-    def __init__(self, on_exit_callback=None):
+    def __init__(self, on_exit_callback=None, on_setup_callback=None):
         self.on_exit_callback = on_exit_callback
+        self.on_setup_callback = on_setup_callback  # NEW
         self.icon = None
         self.running = False
     
     def create_icon_image(self):
         """Create a simple icon image (circle with 'M')"""
-        # Create 64x64 image
         width = 64
         height = 64
         image = Image.new('RGB', (width, height), color='black')
@@ -24,7 +24,7 @@ class TrayIcon:
         # Draw blue circle
         draw.ellipse([8, 8, 56, 56], fill='#0078D4', outline='white', width=2)
         
-        # Draw 'M' in center (simple representation)
+        # Draw 'M' in center
         draw.text((20, 18), 'M', fill='white', font=None)
         
         return image
@@ -37,14 +37,22 @@ class TrayIcon:
     
     def _run_icon(self):
         """Run the tray icon (blocking)"""
-        # Create menu (simple version - no dynamic status)
-        menu = pystray.Menu(
-            pystray.MenuItem("Monitor Controller", None, enabled=False),  # Title
+        # Create menu
+        menu_items = [
+            pystray.MenuItem("Monitor Controller", None, enabled=False),
             pystray.Menu.SEPARATOR,
             pystray.MenuItem("Status: Running", None, enabled=False),
             pystray.Menu.SEPARATOR,
-            pystray.MenuItem("Exit", self._on_exit)
-        )
+        ]
+        
+        # Add setup option if callback provided
+        if self.on_setup_callback:
+            menu_items.append(pystray.MenuItem("⚙️ Run Setup Wizard", self._on_setup))
+            menu_items.append(pystray.Menu.SEPARATOR)
+        
+        menu_items.append(pystray.MenuItem("Exit", self._on_exit))
+        
+        menu = pystray.Menu(*menu_items)
         
         # Create icon
         self.icon = pystray.Icon(
@@ -56,6 +64,11 @@ class TrayIcon:
         
         # Run (blocking)
         self.icon.run()
+    
+    def _on_setup(self, icon, item):
+        """Handle setup menu item"""
+        if self.on_setup_callback:
+            self.on_setup_callback()
     
     def _on_exit(self, icon, item):
         """Handle exit menu item"""
