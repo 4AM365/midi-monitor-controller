@@ -49,19 +49,32 @@ def main():
     print("=" * 50)
     print()
     
-    # Global reference for cleanup
+    # Global references
     midi = None
     monitor = None
     tray = None
+    mapper = None
+    setup_requested = [False]  # Use list so it's mutable in nested functions
+    
+    def cleanup_connections():
+        """Disconnect MIDI and monitor without exiting"""
+        nonlocal midi, monitor
+        print("Disconnecting devices...")
+        try:
+            if midi:
+                midi.disconnect()
+                midi = None
+            if monitor:
+                monitor.disconnect()
+                monitor = None
+        except Exception as e:
+            print(f"Warning during disconnect: {e}")
     
     def cleanup_and_exit():
         """Clean up resources and exit"""
         print("\nShutting down gracefully...")
+        cleanup_connections()
         try:
-            if midi:
-                midi.disconnect()
-            if monitor:
-                monitor.disconnect()
             if tray:
                 tray.stop()
         except:
@@ -69,26 +82,13 @@ def main():
         print("✓ Goodbye!")
         sys.exit(0)
     
-    def rerun_setup():
-        """Callback to re-run setup wizard from tray menu"""
-        # This will be called from tray menu
-        # Close current connections
-        if midi:
-            midi.disconnect()
-        if monitor:
-            monitor.disconnect()
+    def request_setup():
+        """Signal that setup should run (called from tray thread)"""
+        print("\n⚙️  Setup wizard requested...")
+        setup_requested[0] = True
+        # Stop the tray to break out of main loop
         if tray:
-            tray.stop()
-        
-        # Run wizard
-        if run_setup_wizard():
-            # Restart the application
-            print("Configuration updated. Please restart the application.")
-            sys.exit(0)
-        else:
-            print("Setup cancelled. Keeping existing configuration.")
-            # Would need to restart connections here, but simpler to just exit
-            sys.exit(0)
+            tray.running = False
     
     try:
         # Initialize components
@@ -120,18 +120,36 @@ def main():
         print("=" * 50)
         print()
         
-        # Start system tray icon (with setup option)
+        # Start system tray icon
         tray = TrayIcon(
             on_exit_callback=cleanup_and_exit,
-            on_setup_callback=rerun_setup  # New parameter
+            on_setup_callback=request_setup  # Just sets flag
         )
         tray.start()
         
         # Main event loop
         while tray.running:
+            # Check if setup was requested
+            if setup_requested[0]:
+                break
+            
             event = midi.read_event()
             if event:
                 mapper.handle_event(event)
+        
+        # If setup was requested, run it
+        if setup_requested[0]:
+            cleanup_connections()
+            if tray:
+                tray.stop()
+            
+            print("\n=== Running Setup Wizard ===")
+            if run_setup_wizard():
+                print("✓ Setup complete. Please restart the application.")
+            else:
+                print("Setup cancelled.")
+            
+            return 0
                 
     except KeyboardInterrupt:
         cleanup_and_exit()
